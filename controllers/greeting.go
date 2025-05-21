@@ -1,21 +1,39 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/cloudimpl/next-coder-sdk/api"
+	"github.com/cloudimpl/next-coder-sdk/apicontext"
 	"github.com/cloudimpl/next-coder-sdk/polycode"
+	"github.com/gin-gonic/gin"
 	"portal/register/model"
 )
 
-func greeting(ctx polycode.WorkflowContext, input model.HelloRequest) (model.HelloResponse, error) {
-	greetingService := ctx.Service("greeting-service").Get()
+func greeting(c *gin.Context) {
+	request := model.HelloRequest{}
 
-	var output model.HelloResponse
-	res := greetingService.RequestReply(polycode.TaskOptions{}, "greeting", input)
-	if err := res.Get(&output); err != nil {
-		return model.HelloResponse{}, err
+	if err := c.BindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	return output, nil
+	apiCtx, err := apicontext.FromContext(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// The service call remains the same, but the request/response types are updated
+	resp, err := apiCtx.Service("greeting-service").Get().
+		RequestReply(polycode.TaskOptions{}, "Greeting", request).GetAny()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 var Greeting = api.FromWorkflow(greeting)

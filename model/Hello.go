@@ -1,7 +1,8 @@
 package model
 
 type HelloRequest struct {
-	Name string `json:"name"`
+	FirstName string `json:"firstName" validate:"required"`
+	LastName  string `json:"lastName" validate:"required"`
 }
 
 type HelloResponse struct {
