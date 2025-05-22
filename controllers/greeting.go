@@ -10,7 +10,7 @@ import (
 	"portal/register/model"
 )
 
-func greeting(c *gin.Context) {
+func Greeting(c *gin.Context) {
 	request := model.HelloRequest{}
 
 	if err := c.BindJSON(&request); err != nil {
@@ -35,5 +35,3 @@ func greeting(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
-
-var Greeting = api.FromWorkflow(greeting)
