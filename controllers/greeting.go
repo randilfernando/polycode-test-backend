@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/cloudimpl/next-coder-sdk/api"
 	"github.com/cloudimpl/next-coder-sdk/apicontext"
 	"github.com/cloudimpl/next-coder-sdk/polycode"
 	"github.com/gin-gonic/gin"
